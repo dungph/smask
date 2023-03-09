@@ -1,0 +1,15 @@
+{%extends "skel.html"%}
+{%block title%}All table{%endblock title%}
+
+{%block content%}
+<h1> All table</h1>
+
+{%for table in tables%}
+
+<div>
+  <a href="/table/{{table.id}}">{{table.name}}</a>
+</div>
+
+{%endfor%}
+
+{%endblock content%}
