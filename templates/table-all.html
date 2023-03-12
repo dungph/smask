@@ -2,14 +2,17 @@
 {%block title%}All table{%endblock title%}
 
 {%block content%}
-<h1> All table</h1>
+<h1 class="title"> All table</h1>
+<div class="columns">
+  <div class="column is-4">
+    {%include "all-table-section.html"%}
+  </div>
+  <div class="column">
+    {%include "all-role-section.html"%}
 
-{%for table in tables%}
-
-<div>
-  <a href="/table/{{table.id}}">{{table.name}}</a>
+  </div>
 </div>
-
-{%endfor%}
-
+{%include "new-table-section.html"%}
+{%include "new-role-table-section.html"%}
+{%include "drop-role-table-section.html"%}
 {%endblock content%}

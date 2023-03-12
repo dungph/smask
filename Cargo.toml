@@ -10,11 +10,16 @@ chacha20poly1305 = { version = "0.10.1" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1" }
 sqlx = { version = "0.6.2", features = ["runtime-async-std-rustls", "sqlite", "migrate"] }
+sql-parse = { version = "0.11.0" }
 x25519-dalek = { version = "2.0.0-pre.1" }
-once_cell = { version = "1"}
+blake2 = { version = "0.10.6" }
+base58 = { version = "0.2.0" }
+once_cell = { version = "1" }
 anyhow = { version = "1" }
 dotenvy = "0.15.6"
 async-std = { version = "1.12.0", features = ["attributes"] }
 tide = { version = "0.16.0" }
 tera = { version = "1.17.1" }
 tide-tera = { version = "0.2.4"}
+tiny-bip39 = { version = "1.0.0" }
+rand = { version = "0.8.5"}

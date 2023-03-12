@@ -1,0 +1,53 @@
+<table class="table ">
+  <tr>
+    <th>
+      <p class="subtitle">
+        Table
+      </p>
+    </th>
+    <th align="right">
+      <button class="js-modal-trigger button is-small is-responsive has-text-primary " data-target="modal-new-table">
+        New
+      </button>
+    </th>
+  </tr>
+  {%for table_name in table_names%}
+  <tr>
+    <td>
+      <a class="has-text-info" href="/table/{{table_name}}/view">{{table_name}}</a>
+    </td>
+    <td>
+      <div class="dropdown">
+        <div class="dropdown-trigger">
+          <button class="button is-small" aria-haspopup="true" aria-controls="dropdown-menu">
+            ▼
+          </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+          <div class="dropdown-content">
+            <a class="dropdown-item js-modal-trigger" data-target="modal-new-role-table-{{table_name}}">
+              Grant access ...
+            </a>
+            <a class="dropdown-item js-modal-trigger" data-target="modal-drop-role-table-{{table_name}}">
+              Revoke access ...
+            </a>
+            <hr class="dropdown-divider">
+            <form action="/table/{{table_name}}/clear" method="post" id="clear-{{table_name}}-form">
+              <a class="dropdown-item has-text-danger"
+                onclick="document.getElementById('clear-{{table_name}}-form').submit()">
+                Clear data
+              </a>
+            </form>
+            <form action="/table/{{table_name}}/drop" method="post" id="drop-{{table_name}}-form">
+              <a class="dropdown-item has-text-danger"
+                onclick="document.getElementById('drop-{{table_name}}-form').submit()">
+                Drop table
+              </a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  {%endfor%}
+</table>

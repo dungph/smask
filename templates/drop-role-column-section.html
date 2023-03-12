@@ -1,0 +1,37 @@
+{%for column_name in column_names%}
+<form action="/role/table/{{table_name}}/column/{{column_name}}/drop" method="post">
+  <div id="modal-drop-role-column-{{column_name}}" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Revoke role to {{column_name}}</p>
+        <button type="reset" class="delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Role:</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="select">
+                <select>
+                  <option value=""> Select Role </option>
+                  {%for role in roles%}
+                  <option value="{{role.role_key}}">{{role.role_name}}</option>
+                  {%endfor%}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button type="submit" class="button is-success">Save changes</button>
+        <button type="reset" class="button">Cancel</button>
+      </footer>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+  </div>
+</form>
+{%endfor%}

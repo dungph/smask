@@ -1,0 +1,24 @@
+<table class="table ">
+  <tr>
+    <th>
+      <p class="subtitle">
+        Role name
+      </p>
+    </th>
+    <th>
+      <p class="subtitle">
+        Pubkey
+      </p>
+    </th>
+  </tr>
+  {%for role in roles%}
+  <tr>
+    <td>
+      {{role.role_name}}
+    </td>
+    <td>
+      {{role.role_key}}
+    </td>
+  </tr>
+  {%endfor%}
+</table>

@@ -1,0 +1,128 @@
+{%extends "skel.html"%}
+{%block title%}All table{%endblock title%}
+{%block content%}
+<h1 class="title"> Table {{table_name}}</h1>
+<table class="table is-bordered is-hoverable">
+  <tr>
+    <th align="center">
+      rowid
+    </th>
+    {%for column_name in column_names%}
+    <th>
+      <div class="field is-grouped">
+        <p class="control">
+          {{column_name}}
+        </p>
+        <p class="control">
+        <div class="dropdown">
+          <div class="dropdown-trigger">
+            <button class="button is-small" aria-haspopup="true" aria-controls="dropdown-menu">
+              ▼
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item has-text-info">
+                Mask/Unmask Column
+              </a>
+              <a class="dropdown-item js-modal-trigger" data-target="modal-new-role-column-{{column_name}}">
+                Grant access ...
+              </a>
+              <a class="dropdown-item js-modal-trigger" data-target="modal-drop-role-column-{{column_name}}">
+                Revoke access ...
+              </a>
+              <hr class="dropdown-divider">
+              <a href="#" class="dropdown-item has-text-danger">
+                Clear data
+              </a>
+              <a href="#" class="dropdown-item has-text-danger">
+                Drop column
+              </a>
+            </div>
+          </div>
+        </div>
+        </p>
+      </div>
+    </th>
+    {%endfor%}
+    <th>
+      <button class="button is-small has-text-info js-modal-trigger" data-target="modal-new-column">
+        New column
+      </button>
+    </th>
+  </tr>
+  {%for record in table_datas%}
+  <tr>
+    <td align="center">
+      {{record.rowid}}
+    </td>
+    {%for cell in record.cols%}
+    <td>
+      <div class="level">
+        <div class="level-left">
+          <p class="control">
+            {%if cell_datas[cell]%}
+            {{cell_datas[cell]}}
+            {%else%}
+            [Encrypted]
+            {%endif%}
+          </p>
+        </div>
+        <div class="level-right">
+          <p class="control">
+          <div class="dropdown">
+            <div class="dropdown-trigger">
+              <button class="button is-small" aria-haspopup="true" aria-controls="dropdown-menu">
+                ▼
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+              <div class="dropdown-content">
+                <a class="dropdown-item has-text-info">
+                  Mask/Unmask
+                </a>
+                <a class="dropdown-item js-modal-trigger" data-target="modal-edit-cell-{{cell}}">
+                  Edit ...
+                </a>
+                <hr class="dropdown-divider">
+                <a class="dropdown-item has-text-danger">
+                  Clear data
+                </a>
+              </div>
+            </div>
+          </div>
+          </p>
+        </div>
+      </div>
+    </td>
+    {%endfor%}
+    <td>
+      <form action="/table/{{table_name}}/record/{{record.rowid}}/drop" method="post">
+        <button type="submit" class="button is-small has-text-danger">
+          Remove
+        </button>
+      </form>
+    </td>
+  </tr>
+  {%endfor%}
+  <tr>
+    <td>
+      <button class="button is-small has-text-info js-modal-trigger " , data-target="modal-new-record">
+        New
+      </button>
+    </td>
+    {%for column_name in column_names%}
+    <td>
+    </td>
+    {%endfor%}
+    <td>
+    </td>
+  </tr>
+</table>
+
+{%include "edit-cell-section.html"%}
+{%include "new-column-section.html"%}
+{%include "new-record-section.html"%}
+{%include "new-role-column-section.html"%}
+{%include "drop-role-column-section.html"%}
+{%endblock content%}
