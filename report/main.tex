@@ -1,0 +1,81 @@
+\documentclass{report}
+\usepackage{hyperref}
+\usepackage[printonlyused,withpage]{acronym}
+\usepackage{fontsize}
+\changefontsize[18pt]{13pt}
+\usepackage[
+  paper=a4paper,
+  left=30mm,
+  right=20mm,
+  top=20mm,
+  bottom=25mm]{geometry}
+\usepackage{graphicx}
+
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\usepackage[vietnamese]{babel}
+
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+    {\normalfont\fontsize{16}{19}\bfseries}
+    {Chương\ \thechapter:}
+    {1em}
+    {} 
+
+\titleformat{\section}
+    {\normalfont\fontsize{15}{19}\bfseries}
+    {\thesection}
+    {1em}
+    {}
+\titleformat{\subsection}
+    {\normalfont\fontsize{14}{19}\bfseries\slshape}
+    {\thesubsection}
+    {1em}
+    {}
+\titleformat{\subsubsection}
+    {\normalfont\fontsize{14}{19}\slshape}
+    {\thesubsubsection}
+    {1em}
+    {}
+\usepackage{xcolor}
+
+\begin{document}
+\include{coverpage}
+\pagenumbering{roman}
+
+\include{intro}
+
+\renewcommand{\contentsname}{MỤC LỤC}
+\renewcommand{\listfigurename}{DANH SÁCH HÌNH VẼ}
+\renewcommand{\listtablename}{DANH SÁCH BẢNG}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\contentsname}
+
+\tableofcontents
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listfigurename}
+
+\listoffigures
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{\listtablename}
+
+\listoftables
+
+\include{acro}
+
+\newpage
+
+\pagenumbering{arabic}
+\include{ch1}
+
+\include{ch2}
+
+\include{ch3}
+
+\end{document}
