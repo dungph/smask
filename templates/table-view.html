@@ -22,7 +22,8 @@
           </div>
           <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-              <a href="#" class="dropdown-item has-text-info">
+              <a class="dropdown-item has-text-info"
+                onclick="toggle_column('view-{{column_name}}')">
                 Mask/Unmask Column
               </a>
               <a class="dropdown-item js-modal-trigger" data-target="modal-new-role-column-{{column_name}}">
@@ -35,9 +36,13 @@
               <a href="#" class="dropdown-item has-text-danger">
                 Clear data
               </a>
-              <a href="#" class="dropdown-item has-text-danger">
-                Drop column
-              </a>
+              <form id="drop-{{column_name}}-form" action="/table/{{table_name}}/column/{{column_name}}/drop"
+                method="post">
+                <a class="dropdown-item has-text-danger"
+                  onclick="document.getElementById('drop-{{column_name}}-form').submit()">
+                  Drop column
+                </a>
+              </form>
             </div>
           </div>
         </div>
@@ -54,17 +59,16 @@
   {%for record in table_datas%}
   <tr>
     <td align="center">
-      {{record.rowid}}
+      {{record["rowid"]}}
     </td>
-    {%for cell in record.cols%}
+    {%for column_name in column_names%}
     <td>
       <div class="level">
         <div class="level-left">
           <p class="control">
-            {%if cell_datas[cell]%}
-            {{cell_datas[cell]}}
+            {%if record[column_name]%}
+            {{record[column_name]}}
             {%else%}
-            [Encrypted]
             {%endif%}
           </p>
         </div>
@@ -78,10 +82,10 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item has-text-info">
+                <a class="dropdown-item has-text-info" onclick="toggle_cell('view-{{column_name}}-{{record.rowid}}')">
                   Mask/Unmask
                 </a>
-                <a class="dropdown-item js-modal-trigger" data-target="modal-edit-cell-{{cell}}">
+                <a class="dropdown-item js-modal-trigger" data-target="modal-edit-{{column_name}}-{{record.rowid}}">
                   Edit ...
                 </a>
                 <hr class="dropdown-divider">
@@ -107,9 +111,11 @@
   {%endfor%}
   <tr>
     <td>
-      <button class="button is-small has-text-info js-modal-trigger " , data-target="modal-new-record">
-        New
-      </button>
+      <form action="/table/{{table_name}}/record/new" method="post">
+        <button class="button is-small has-text-info " type="submit">
+          New
+        </button>
+      </form>
     </td>
     {%for column_name in column_names%}
     <td>
@@ -122,7 +128,67 @@
 
 {%include "edit-cell-section.html"%}
 {%include "new-column-section.html"%}
-{%include "new-record-section.html"%}
 {%include "new-role-column-section.html"%}
 {%include "drop-role-column-section.html"%}
+
+<script>
+  function toggle_column(eid) {
+    let value = document.getElementById(eid).value;
+    console.log(value);
+    if (value == '0') {
+      document.getElementById(eid).value = '1';
+    } else {
+      document.getElementById(eid).value = '0';
+    }
+    {%for record in table_datas %}
+    cid = eid + '-{{record.rowid}}';
+    document.getElementById(cid).value = document.getElementById(eid).value;
+    {% endfor %}
+    document.getElementById('reveal-list').submit();
+
+  }
+  function toggle_cell(eid) {
+    let value = document.getElementById(eid).value;
+    console.log(value);
+    if (value == '0') {
+      document.getElementById(eid).value = '1';
+    } else {
+      document.getElementById(eid).value = '0';
+    }
+    document.getElementById('reveal-list').submit();
+  }
+</script>
+<script>
+  function init_reveal(cid) {
+    const urlParams = new URLSearchParams(window.location.search);
+    let myParam = urlParams.get(cid);
+    if (myParam) {
+      document.getElementById(cid).value = myParam;
+    } else {
+      document.getElementById(cid).value = '0';
+    }
+  }
+</script>
+<form action="/table/{{table_name}}/view" method="get" id="reveal-list">
+
+  {%for column_name in column_names%}
+  <input name="view-{{column_name}}" id="view-{{column_name}}" value="0" type="hidden">
+  <script>
+    init_reveal('view-{{column_name}}')
+  </script>
+  {%endfor%}
+
+  {%for record in table_datas%}
+
+  {%for column_name in column_names%}
+
+  <input name="view-{{column_name}}-{{record.rowid}}" id="view-{{column_name}}-{{record.rowid}}" value="0"
+    type="hidden">
+  <script>
+    init_reveal('view-{{column_name}}-{{record.rowid}}')
+  </script>
+  {%endfor%}
+  {%endfor%}
+
+</form>
 {%endblock content%}

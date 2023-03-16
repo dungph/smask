@@ -1,0 +1,285 @@
+{
+  "db": "SQLite",
+  "028fce083f012b0878b9cfc75d25607ffdc7edd0894ea4b41e9f87f517908fb4": {
+    "describe": {
+      "columns": [
+        {
+          "name": "n",
+          "ordinal": 0,
+          "type_info": "Int"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        select count(*) n \n        from smask_encrypted\n        where smask_table = ?1\n        and smask_column = ?2\n        "
+  },
+  "03496aea7afef6e0eb281d1f8916c21ba149e53f0e26fa38fe893aec64999cdd": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        insert into smask_role_table\n        (smask_key, smask_table)\n        values (?1, ?2)\n        "
+  },
+  "0a9d9936e405a985bb856f2ef994492b01050030191dfc275f4a5060d6763115": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        insert into smask_role_table\n        (smask_key, smask_table)\n        values(?1, ?2)\n        "
+  },
+  "1547f04e0444da14f2b4e348ededb5b3d8b117ab06c7893e4ad9d28acf9f5fef": {
+    "describe": {
+      "columns": [
+        {
+          "name": "name",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        true
+      ],
+      "parameters": {
+        "Right": 0
+      }
+    },
+    "query": "\n        select name\n        from sqlite_master\n        "
+  },
+  "279a2ce7158e2cd0d68bf11f390d4312aaf5c9a3f49d5d5f307149db509f77dc": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n        insert into smask_role_column\n        (smask_key, smask_table, smask_column)\n        values (?1, ?2, ?3)\n        "
+  },
+  "28310dd61b68359704e80f6634b69a90d637dc4f39a4d2fb6dfe1cdec7f3344d": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n            insert into smask_role_column\n            (smask_key, smask_table, smask_column)\n            values (?1, ?2, ?3)\n            "
+  },
+  "3cad15a2ac6d5148ea2fc762f8e61d24de0ae4a5518b0ddd4f6fcd2ffaf79ce0": {
+    "describe": {
+      "columns": [
+        {
+          "name": "smask_key",
+          "ordinal": 0,
+          "type_info": "Blob"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n        select smask_key\n        from smask_role_table\n        where smask_table = ?1\n        "
+  },
+  "43abf647fbd1d7cd60f11cdca84d7d833f6da5d2b112d5783080d4a0f4d61d3d": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n        delete from smask_role_column\n        where smask_table = ?1\n        "
+  },
+  "4a759b130afc8cea7396b0f8b978c1177f20199726c8b1471782e51996369ddb": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        insert into smask_role_column \n        (smask_key, smask_table, smask_column)\n        select smask_key, smask_table, ?2  as smask_column\n        from smask_role_table\n        where smask_table =?1\n\n        "
+  },
+  "4bc6b7261a58a8df87a1f7d5cc59f45131beb1cd1e6e04789b8c0576733e40bf": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n            insert into smask_encrypted\n            (smask_table, smask_column)\n            values (?1, ?2)\n            "
+  },
+  "825303d0207c41d8cbf22337da92aa79b880763c5c82a164d67341e57c0722e8": {
+    "describe": {
+      "columns": [
+        {
+          "name": "sql",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        true
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n        select sql\n        from sqlite_master\n        where name = ?1"
+  },
+  "84b4e8b58d9f722b6e5d3726d5883c9440b089ad28374386237dfa85eb63535d": {
+    "describe": {
+      "columns": [
+        {
+          "name": "smask_key",
+          "ordinal": 0,
+          "type_info": "Blob"
+        },
+        {
+          "name": "smask_role",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        true,
+        false
+      ],
+      "parameters": {
+        "Right": 0
+      }
+    },
+    "query": "\n        select smask_key, smask_role \n        from smask_role;\n        "
+  },
+  "84ff19f5c27522d7fffdc8d6adff341c3179d9db34c71c4e74ac5b9d2fab78cd": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n        delete from smask_role_table\n        where smask_table = ?1\n        "
+  },
+  "90f79a692d952dbd42e529bb6061bd506fce728b99b022362804640cb6d29fb6": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        delete from smask_role_column\n        where smask_key = ?1\n        and smask_table = ?2\n        "
+  },
+  "a1cd0f6073b6ea9fb3e1e7c25cfc88afe85620d4819611a128ac794e211219dd": {
+    "describe": {
+      "columns": [
+        {
+          "name": "smask_key",
+          "ordinal": 0,
+          "type_info": "Blob"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        select smask_key\n        from smask_role_column\n        where smask_table = ?1 and smask_column = ?2\n        "
+  },
+  "a259915e353993be178bfa930ea6882360e9df00369f25115850db12322c541e": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        insert into smask_role (smask_key, smask_role)\n        values (?1, ?2)\n            "
+  },
+  "ba3a4e73f57ee9594d6960fe098fc1934a510e33dcf235c1ee967464a2179d20": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        delete from smask_encrypted\n        where smask_table = ?1 and smask_column = ?2\n        "
+  },
+  "c3a97b11104d3c9ff1aa5e653215c1a1643a9903b77282999a814db6a05e8618": {
+    "describe": {
+      "columns": [
+        {
+          "name": "n",
+          "ordinal": 0,
+          "type_info": "Int"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "\n        select count(*) as n\n        from smask_role\n        where smask_key = ?1"
+  },
+  "cc084a40216cbdd7ae2b0ce5beef5dc62a86a5b93197c767a2b0928e9a7895e4": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        delete from smask_role_table\n        where smask_key = ?1\n        and smask_table = ?2\n        "
+  },
+  "d3bbac45fd6c034db712e266a7407cefcd1c2b3753ea1aa4de878d98fa52684d": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n        delete from smask_role_column\n        where smask_key = ?1 and smask_table = ?2 and smask_column = ?3\n        "
+  },
+  "d449ca021ea4579830ed1ad244fe41015131aa2a8f3f794910001375323a1106": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n        insert into smask_role_column\n        (smask_key, smask_table, smask_column)\n        values (?1, ?2, ?3) "
+  },
+  "d66ef9d2181c12ace99ed7073cbea7e0ecfaa0ae224253e6129ee0fdfca08806": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        delete from smask_role_column\n        where smask_table = ?1 and smask_column = ?2\n        "
+  }
+}

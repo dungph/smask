@@ -9,7 +9,9 @@ edition = "2021"
 chacha20poly1305 = { version = "0.10.1" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1" }
-sqlx = { version = "0.6.2", features = ["runtime-async-std-rustls", "sqlite", "migrate"] }
+postcard = { version = "1.0.4", features = ["alloc"] }
+hex = { version = "0.4.3" }
+sqlx = { version = "0.6.2", features = ["runtime-async-std-rustls", "sqlite", "migrate", "offline"] }
 sql-parse = { version = "0.11.0" }
 x25519-dalek = { version = "2.0.0-pre.1" }
 blake2 = { version = "0.10.6" }

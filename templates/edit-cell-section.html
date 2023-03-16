@@ -1,11 +1,11 @@
 {%for record in table_datas%}
-{%for cell in record.cols%}
-<form action="/cell/{{cell}}/update" method="post">
-  <div id="modal-edit-cell-{{cell}}" class="modal">
+{%for column in column_names%}
+<form action="/table/{{table_name}}/column/{{column}}/record/{{record.rowid}}/update" method="post">
+  <div id="modal-edit-{{column}}-{{record.rowid}}" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Update cell {{cell}}</p>
+        <p class="modal-card-title">Update cell</p>
         <button type="reset" class="delete" aria-label="close"></button>
       </header>
       <section class="modal-card-body">
@@ -16,7 +16,7 @@
           <div class="field-body">
             <div class="field">
               <p class="control">
-                <input class="input" name="cell_data" type="text" value="cell_data">
+                <input class="input" name="value" type="text" value="cell_data">
               </p>
             </div>
           </div>

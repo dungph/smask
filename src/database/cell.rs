@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use anyhow::Result;
 use base58::ToBase58;
 use blake2::Digest;
-use chacha20poly1305::{aead::Aead, KeyInit};
+use chacha20poly1305::{aead::Aead, ChaCha20Poly1305, ChaChaPoly1305, KeyInit};
 use serde::{Deserialize, Serialize};
 use sqlx::Row;
 use x25519_dalek::{x25519, X25519_BASEPOINT_BYTES};
@@ -15,12 +15,20 @@ pub enum CellValue {
     Clear(Vec<u8>),
     Encrypted {
         ephemeral: [u8; 32],
-        value: BTreeMap<String, Vec<u8>>,
+        value: BTreeMap<[u8; 32], Vec<u8>>,
+    },
+    KeyEncrypted {
+        ephemeral: [u8; 32],
+        keys: BTreeMap<[u8; 32], Vec<u8>>,
+        cipher: Vec<u8>,
     },
 }
 
 impl CellValue {
-    pub fn encrypt(readers: &[[u8; 32]], data: &[u8]) -> Self {
+    pub fn plain(data: &[u8]) -> Self {
+        Self::Clear(data.to_owned())
+    }
+    pub fn encrypted(data: &[u8], readers: &[[u8; 32]]) -> Self {
         let e = rand::random::<[u8; 32]>();
         let pub_e = x25519(e, X25519_BASEPOINT_BYTES);
         let mut values = BTreeMap::new();
@@ -28,13 +36,27 @@ impl CellValue {
             let shared = x25519(e, *reader);
             let mut hasher = blake2::Blake2s256::new();
             hasher.update(shared);
-            let cipher = chacha20poly1305::ChaCha20Poly1305::new(&hasher.finalize());
+            let cipher = ChaCha20Poly1305::new(&hasher.finalize());
             let ciphertext = cipher.encrypt(&[0u8; 12].into(), data).unwrap();
-            values.insert(reader.to_base58(), ciphertext);
+            values.insert(*reader, ciphertext);
         }
         Self::Encrypted {
             ephemeral: pub_e,
             value: values,
+        }
+    }
+    pub fn cipher_encrypted(data: &[u8], key: [u8; 32], readers: &[[u8; 32]]) -> Self {
+        match Self::encrypted(key.as_slice(), readers) {
+            CellValue::Encrypted { ephemeral, value } => {
+                let cipher = ChaCha20Poly1305::new(&key.into());
+                let blob = cipher.encrypt(&[0u8; 12].into(), data).unwrap();
+                CellValue::KeyEncrypted {
+                    ephemeral,
+                    keys: value,
+                    cipher: blob,
+                }
+            }
+            _ => unreachable!(),
         }
     }
     pub fn decrypt(self, reader: [u8; 32]) -> Option<Vec<u8>> {
@@ -42,12 +64,33 @@ impl CellValue {
             CellValue::Clear(v) => Some(v),
             CellValue::Encrypted { ephemeral, value } => {
                 let pubkey = x25519(reader, X25519_BASEPOINT_BYTES);
-                let val = value.get(&pubkey.to_base58())?;
+                let val = value.get(&pubkey)?;
                 let shared = x25519(reader, ephemeral);
                 let mut hasher = blake2::Blake2s256::new();
                 hasher.update(shared);
-                let cipher = chacha20poly1305::ChaCha20Poly1305::new(&hasher.finalize());
-                Some(cipher.decrypt(&[0u8; 12].into(), val.as_slice()).ok()?)
+                let cipher = ChaCha20Poly1305::new(&hasher.finalize());
+                let ret = cipher.decrypt(&[0u8; 12].into(), val.as_slice()).ok()?;
+                Some(ret)
+            }
+            CellValue::KeyEncrypted {
+                ephemeral,
+                keys,
+                cipher: blob,
+            } => {
+                let pubkey = x25519(reader, X25519_BASEPOINT_BYTES);
+                let encrypted_key = keys.get(&pubkey)?;
+                let shared = x25519(reader, ephemeral);
+                let mut hasher = blake2::Blake2s256::new();
+                hasher.update(shared);
+                let cipher = ChaCha20Poly1305::new(&hasher.finalize());
+                let key: [u8; 32] = cipher
+                    .decrypt(&[0u8; 12].into(), encrypted_key.as_slice())
+                    .ok()?
+                    .try_into()
+                    .ok()?;
+
+                let blob_cipher = ChaCha20Poly1305::new(&key.into());
+                blob_cipher.decrypt(&[0u8; 12].into(), blob.as_slice()).ok()
             }
         }
     }
@@ -59,54 +102,18 @@ pub async fn update_cell(
     rowid: i64,
     data: &CellValue,
 ) -> Result<()> {
-    let rowid: i64 = sqlx::query(&format!(
+    let raw = postcard::to_allocvec(data)?;
+    sqlx::query(&format!(
         "
-        select {column_name}
-        from {table_name}
-        where rowid = {rowid}"
+        update {table_name}
+        set {column_name} = ?2 
+        where rowid = ?1
+            ",
     ))
-    .fetch_one(&*DB)
-    .await
-    .map(|r| r.get(column_name))?;
-
-    let raw = serde_json::to_vec(data)?;
-    sqlx::query!(
-        "
-        update smask_cell
-        set smask_cell_data=?2
-        where smask_cell_id=?1",
-        rowid,
-        raw
-    )
+    .bind(rowid)
+    .bind(raw)
     .execute(&*DB)
     .await?;
-    Ok(())
-}
-pub async fn insert_cell(table_name: &str, column_name: &str) -> Result<i64> {
-    Ok(sqlx::query!(
-        "
-        insert into smask_cell
-        (smask_cell_table, smask_cell_column, smask_cell_data)
-        values (?1, ?2, X'')
-        returning smask_cell_id",
-        table_name,
-        column_name
-    )
-    .fetch_one(&*DB)
-    .await?
-    .smask_cell_id)
-}
-pub async fn get_cell(cell_id: i64) -> Result<CellValue> {
-    let raw = sqlx::query!(
-        "
-        select smask_cell_data
-        from smask_cell
-        where smask_cell_id = ?1",
-        cell_id
-    )
-    .fetch_one(&*DB)
-    .await?
-    .smask_cell_data;
 
-    Ok(serde_json::from_slice(&raw)?)
+    Ok(())
 }

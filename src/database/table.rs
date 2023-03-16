@@ -1,13 +1,17 @@
+use std::collections::BTreeMap;
+
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use sqlx::Row;
+use sqlx::{Column, Row};
+
+use crate::CellValue;
 
 use super::{cell, column, DB};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Record {
-    rowid: i64,
-    pub cols: Vec<i64>,
+    pub rowid: i64,
+    pub cols: BTreeMap<String, CellValue>,
 }
 
 pub async fn table_data(table_name: &str) -> Result<Vec<Record>> {
@@ -17,12 +21,14 @@ pub async fn table_data(table_name: &str) -> Result<Vec<Record>> {
         .await?
         .iter()
         .map(|row| {
-            let rowid = row.get("rowid");
-            let cols = columns
-                .iter()
-                .map(|column| row.get(column.as_str()))
-                .collect();
-            Record { rowid, cols }
+            let mut ret = BTreeMap::new();
+            for col in columns.iter().filter(|c| c.as_str() != "rowid") {
+                let raw: Vec<u8> = row.get(col.as_str());
+                let val = postcard::from_bytes(&raw).unwrap();
+                ret.insert(col.to_owned(), val);
+            }
+            let rowid: i64 = row.get("rowid");
+            Record { rowid, cols: ret }
         })
         .collect())
 }
@@ -40,7 +46,7 @@ pub async fn create_table(role_key: [u8; 32], table_name: &str) -> Result<()> {
     sqlx::query!(
         "
         insert into smask_role_table
-        (smask_role_key, smask_table_name)
+        (smask_key, smask_table)
         values(?1, ?2)
         ",
         role_key,
@@ -52,12 +58,14 @@ pub async fn create_table(role_key: [u8; 32], table_name: &str) -> Result<()> {
 }
 
 pub async fn drop_table(table_name: &str) -> Result<()> {
-    let query = format!("drop table {table_name}");
-    sqlx::query(&query).execute(&*DB).await?;
+    sqlx::query(&format!("drop table {table_name}"))
+        .execute(&*DB)
+        .await?;
+
     sqlx::query!(
         "
         delete from smask_role_table
-        where smask_table_name = ?1
+        where smask_table = ?1
         ",
         table_name
     )
@@ -67,7 +75,7 @@ pub async fn drop_table(table_name: &str) -> Result<()> {
     sqlx::query!(
         "
         delete from smask_role_column
-        where smask_table_name = ?1
+        where smask_table = ?1
         ",
         table_name
     )
@@ -82,7 +90,7 @@ pub async fn clear_table(table_name: &str) -> Result<()> {
     return Ok(());
 }
 
-pub async fn list_table(role_key: [u8; 32]) -> Result<Vec<String>> {
+pub async fn list_table() -> Result<Vec<String>> {
     const BUILT_IN_TABLE: &[&str] = &[
         "_sqlx_migrations",
         "sqlite_autoindex__sqlx_migrations_1",
@@ -91,17 +99,13 @@ pub async fn list_table(role_key: [u8; 32]) -> Result<Vec<String>> {
         "smask_role_table",
         "smask_role_column",
         "smask_role_column_value",
-        "smask_cell",
+        "smask_encrypted",
     ];
-    let role_key = role_key.to_vec();
     let tables = sqlx::query!(
         "
         select name
         from sqlite_master
-        join smask_role_table
-        on smask_table_name = name
-        where smask_role_key = ?1",
-        role_key
+        ",
     )
     .fetch_all(&*DB)
     .await?
@@ -113,35 +117,23 @@ pub async fn list_table(role_key: [u8; 32]) -> Result<Vec<String>> {
 }
 
 pub async fn new_record(table_name: &str) -> Result<i64> {
-    let column_list = column::list_column(table_name).await?;
-    let columns = column_list.join(",");
-    let mut values: Vec<i64> = vec![];
-    for c in column_list {
-        values.push(cell::insert_cell(table_name, &c).await?);
-    }
-    let values_str = values
-        .iter()
-        .map(|i| i.to_string())
-        .collect::<Vec<_>>()
-        .join(",");
-    let rowid = sqlx::query(&format!(
+    Ok(sqlx::query(&format!(
         "
         insert into {table_name}
-        ({columns})
-        values ({values_str})
+        default values
         returning rowid"
     ))
     .fetch_one(&*DB)
     .await?
-    .get("rowid");
-    Ok(rowid)
+    .get("rowid"))
 }
 pub async fn remove_record(table_name: &str, record: i64) -> Result<()> {
     sqlx::query(&format!(
         "
         delete from {table_name}
-        where rowid = {record}"
+        where rowid = ?1"
     ))
+    .bind(record)
     .execute(&*DB)
     .await?;
     Ok(())
