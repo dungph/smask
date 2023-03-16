@@ -1,7 +1,17 @@
 \documentclass{report}
+\usepackage[vietnamese]{babel}
 \usepackage{hyperref}
-\usepackage[printonlyused,withpage]{acronym}
+\usepackage[acronym, toc]{glossaries}
+\usepackage{graphicx}
+\usepackage{fontspec}
+\usepackage{titlesec}
 \usepackage{fontsize}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+
 \changefontsize[18pt]{13pt}
 \usepackage[
   paper=a4paper,
@@ -9,13 +19,9 @@
   right=20mm,
   top=20mm,
   bottom=25mm]{geometry}
-\usepackage{graphicx}
 
-\usepackage{fontspec}
 \setmainfont{Times New Roman}
-\usepackage[vietnamese]{babel}
 
-\usepackage{titlesec}
 \titleformat{\chapter}[hang]
     {\normalfont\fontsize{16}{19}\bfseries}
     {Chương\ \thechapter:}
@@ -37,10 +43,13 @@
     {\thesubsubsection}
     {1em}
     {}
-\usepackage{xcolor}
+
+\include{glossaries}
+
+
 
 \begin{document}
-\include{coverpage}
+\include{cover}
 \pagenumbering{roman}
 
 \include{intro}
@@ -67,11 +76,15 @@
 
 \listoftables
 
-\include{acro}
+\printnoidxglossary[type=\acronymtype, title=DANH SÁCH KÝ HIỆU VÀ TỪ VIẾT TẮT, toctitle=DANH SÁCH KÝ HIỆU VÀ TỪ VIẾT TẮT]
+
+\printnoidxglossary[title=DANH SÁCH THUẬT NGỮ, toctitle=DANH SÁCH THUẬT NGỮ]
+
 
 \newpage
 
 \pagenumbering{arabic}
+
 \include{ch1}
 
 \include{ch2}

@@ -1,0 +1,113 @@
+
+
+\makenoidxglossaries
+
+\newglossaryentry{latex}{
+	name=Latex,
+	description={Is a mark up language specially suited for scientific documents}
+}
+
+\newglossaryentry{datamask}{
+	name=mặt nạ dữ liệu,
+	description={là kỹ thuật che giấu dữ liệu nhạy cảm để tránh thất thoát thông tin}
+}
+
+\newglossaryentry{chachapoly}{
+	name=ChaCha20-Poly1305,
+	description={là hệ mã dòng có kiến trúc mã hóa với dữ liệu liên kết dựa trên \gls{chacha20} và \gls{poly1305}}
+}
+
+\newglossaryentry{chacha20}{
+	name=ChaCha20,
+	description={là hệ mã dòng \gls{chacha} với 20 vòng}
+}
+
+\newglossaryentry{poly1305}{
+	name=Poly1305,
+	description={là họ băm được thiết kế bởi Daniel J. Bernstein sử dụng cho mật mã}
+}
+\newglossaryentry{encrypt}{
+	name=mã hóa,
+	description={là phương pháp để biến thông tin (phim ảnh, văn bản, hình ảnh...) từ định dạng bình thường sang dạng thông tin không thể hiểu được nếu không có phương tiện \gls{decrypt}}
+}
+\newglossaryentry{decrypt}{
+	name=giải mã,
+	description={là phương pháp đưa thông tin đã được \gls{encrypt} về dạng thông tin ban đầu}
+}
+
+\newglossaryentry{key}{
+	name=khóa,
+	description={là một chuỗi bit cho phép \gls{encrypt} hoặc \gls{decrypt}}
+}
+\newglossaryentry{hash}{
+	name=băm,
+	description={là quá trình biến đổi một chiều từ một chuỗi với độ dài bất kỳ tạo ra chuỗi có độ dài cố định}
+}
+\newglossaryentry{hash function}{
+	name=hàm băm,
+	description={là thuật toán thực hiện quá trình \gls{hash}}
+}
+\newglossaryentry{symmetric cipher}{
+	name= mã hóa đối xứng,
+	description={(mã hóa khóa bí mật) là phương pháp mã hóa mà \gls{key} \gls{encrypt} và \gls{key} \gls{decrypt} là như nhau }
+}
+\newglossaryentry{asymmetric cipher}{
+	name= mã hóa không đối xứng,
+	description={(mã hóa khóa công khai) là phương pháp mã hóa sử dụng 2 \gls{key} cho việc \gls{encrypt} \gls{decrypt} }
+}
+\newglossaryentry{advanced encryption standard}{
+	name=Advanced Encryption Standard,
+	description={là một tiêu chuẩn \gls{symmetric cipher} với độ dài \gls{key} là 128, 192 hoặc 256 bit}
+}
+\newglossaryentry{data encryption standard}{
+	name=Data Encryption Standard,
+	description={là một tiêu chuẩn \gls{symmetric cipher} được FIPS chọn làm chuẩn chính thức vào năm 1976}
+}
+\newglossaryentry{triple data encryption standard}{
+	name=Triple DES,
+	description={là một thuật toán \gls{symmetric cipher}, áp dụng thuật toán mã \gls{des} ba lần cho mỗi khối dữ liệu}
+}
+\newglossaryentry{chacha}{
+	name=ChaCha,
+	description={là một họ \gls{symmetric cipher} của tác giả Daniel J. Bernstein}
+}
+\newglossaryentry{rivest shamir adleman}{
+	name=Rivest Shamir Adleman,
+	description={ là một hệ thống \gls{asymmetric cipher} được sử dụng rộng rãi cho việc truyền tin}
+}
+\newglossaryentry{elgamal encryption}{
+	name=Elgamal encryption,
+	description={là thuật toán \gls{asymmetric cipher} dựa trên \gls{dhke}}
+}
+
+\newglossaryentry{dhke}{
+	name=trao đổi khóa Diffie-Hellman,
+	description={là một phương pháp toán học để trao đổi khóa mật mã một cách bảo mật qua kênh công khai}
+}
+\newglossaryentry{quarter}{
+	name=quarter,
+	description={(một phần tư) là một trong số 4 phần nào đó}
+}
+\newglossaryentry{round function}{
+	name=round function,
+	description={là một hàm thực hiện các phép biến đổi trên một chuỗi có độ dài cố định}
+}
+
+\newglossaryentry{elliptic curve cryptography}{
+	name=Elliptic Curve Cryptography,
+	description={Mật mã học trên đường cong elliptici}
+}
+\newglossaryentry{database management system}{
+name=Database Management System,
+description={Hệ quản trị cơ sở dữ liệu}
+}
+
+
+\newacronym{dbms}{DBMS}{Database Management System}
+\newacronym{dh}{DH}{Diffie-Hellman}
+\newacronym{aes}{AES}{\gls{advanced encryption standard}}
+\newacronym{des}{DES}{\gls{data encryption standard}}
+\newacronym{3des}{3DES}{\gls{triple data encryption standard}}
+\newacronym{ecdh}{ECDH}{Elliptic-curve Diffie-Hellman}
+\newacronym{rsa}{RSA}{\gls{rivest shamir adleman}}
+\newacronym{ecc}{ECC}{\gls{elliptic curve cryptography}}
